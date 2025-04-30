@@ -278,61 +278,94 @@ footer i {
     }
 }
 
+/* Print mode class */
+body.print-mode .tabs-container {
+    display: none !important;
+}
+
+body.print-mode .mobile-days {
+    display: block !important;
+}
+
+body.print-mode .day-content {
+    display: block !important;
+}
+
 /* Print styles */
 @media print {
     .actions, .status-indicator, footer {
-        display: none;
+        display: none !important;
     }
     
     .container {
-        width: 100%;
-        max-width: 100%;
-        padding: 0;
-        margin: 0;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 10px !important;
+        margin: 0 !important;
     }
     
     header {
         text-align: center;
         margin-bottom: 20px;
+        border-bottom: 2px solid #000 !important;
+        padding-bottom: 10px !important;
     }
     
-    .tabs-container, .mobile-days {
-        box-shadow: none;
-    }
-    
-    .tabs {
-        display: none;
-    }
-    
-    .tab-content {
-        display: none;
+    .tabs-container {
+        display: none !important;
     }
     
     .mobile-days {
-        display: block;
+        display: block !important;
+        border: none !important;
+        box-shadow: none !important;
     }
     
     .day-section {
         page-break-inside: avoid;
-        margin-bottom: 20px;
-        box-shadow: none;
-        border: 1px solid #ddd;
+        margin-bottom: 30px !important;
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
     }
     
     .day-content {
         display: block !important;
+        padding: 15px !important;
     }
     
     .day-header {
-        background-color: #f9f9f9;
+        background-color: #f9f9f9 !important;
+        border-bottom: 1px solid #000 !important;
+        padding: 10px 15px !important;
     }
     
     .toggle-icon {
-        display: none;
+        display: none !important;
+    }
+    
+    .form-group {
+        margin-bottom: 15px !important;
+    }
+    
+    label {
+        font-weight: bold !important;
     }
     
     textarea {
-        border: none;
-        resize: none;
+        border: none !important;
+        resize: none !important;
+        background: transparent !important;
+        min-height: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+        padding: 5px 0 !important;
+        font-family: 'Nunito', sans-serif !important;
+    }
+    
+    /* Print optimization */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }

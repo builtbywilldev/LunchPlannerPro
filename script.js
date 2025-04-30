@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Close all sections
                 document.querySelectorAll('.day-content').forEach(content => {
                     content.classList.remove('active');
+                    content.dataset.wasActive = false;
                 });
                 
                 document.querySelectorAll('.toggle-icon').forEach(icon => {
@@ -167,6 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // If it wasn't active, open it
                 if (!isActive) {
                     dayContent.classList.add('active');
+                    dayContent.dataset.wasActive = true;
                     dayHeader.querySelector('.toggle-icon').classList.add('active');
                 }
             });
@@ -230,7 +232,88 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Print week button
         printWeekBtn.addEventListener('click', function() {
-            window.print();
+            // Prepare the document for printing
+            document.body.classList.add('print-mode');
+            
+            // Ensure all day-content elements are visible for printing
+            document.querySelectorAll('.day-content').forEach(content => {
+                content.classList.add('active');
+            });
+            
+            // Display a message to the user
+            showSaveStatus('Preparing print view...');
+            
+            // Short delay to allow the browser to update the DOM
+            setTimeout(function() {
+                // Try the native print method
+                try {
+                    window.print();
+                } catch (e) {
+                    console.error('Native print failed:', e);
+                    // Fallback - open the content in a new window for printing
+                    const printContent = document.documentElement.outerHTML;
+                    const printWindow = window.open('', '_blank', 'width=800,height=600');
+                    
+                    if (printWindow) {
+                        printWindow.document.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <title>Family Lunch Planner - Print</title>
+                                <link rel="stylesheet" href="styles.css">
+                                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+                                <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+                                <style>
+                                    body { 
+                                        font-family: 'Nunito', sans-serif;
+                                        background-color: white; 
+                                    }
+                                    .day-content { 
+                                        display: block !important; 
+                                    }
+                                    .tabs-container { 
+                                        display: none !important; 
+                                    }
+                                    .mobile-days { 
+                                        display: block !important; 
+                                    }
+                                    .actions, .status-indicator, footer { 
+                                        display: none !important; 
+                                    }
+                                </style>
+                            </head>
+                            <body class="print-mode">
+                                ${document.querySelector('.container').outerHTML}
+                                <script>
+                                    window.onload = function() { 
+                                        window.print();
+                                        setTimeout(function() { window.close(); }, 500);
+                                    };
+                                </script>
+                            </body>
+                            </html>
+                        `);
+                        printWindow.document.close();
+                    } else {
+                        alert("Please allow popups for this website to use the print feature.");
+                    }
+                }
+                
+                // After printing (or canceling), restore the UI
+                setTimeout(function() {
+                    // Remove print mode class
+                    document.body.classList.remove('print-mode');
+                    
+                    // Return mobile accordion to previous state
+                    document.querySelectorAll('.day-content').forEach(content => {
+                        if (!content.dataset.wasActive) {
+                            content.classList.remove('active');
+                        }
+                    });
+                    
+                    showSaveStatus('Print view closed');
+                }, 1000);
+            }, 300);
         });
     }
     

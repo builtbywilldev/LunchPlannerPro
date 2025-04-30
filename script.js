@@ -26,19 +26,23 @@ document.addEventListener('DOMContentLoaded', function() {
         'sunday': 'Sunday'
     };
     
-    // Default empty plan
-    const emptyPlan = {
-        monday: { mainMeal: '', snack: '', drink: '', notes: '' },
-        tuesday: { mainMeal: '', snack: '', drink: '', notes: '' },
-        wednesday: { mainMeal: '', snack: '', drink: '', notes: '' },
-        thursday: { mainMeal: '', snack: '', drink: '', notes: '' },
-        friday: { mainMeal: '', snack: '', drink: '', notes: '' },
-        saturday: { mainMeal: '', snack: '', drink: '', notes: '' },
-        sunday: { mainMeal: '', snack: '', drink: '', notes: '' }
-    };
+    // Default empty plan - function to generate a fresh empty plan
+    function getEmptyPlan() {
+        return {
+            monday: { mainMeal: '', snack: '', drink: '', notes: '' },
+            tuesday: { mainMeal: '', snack: '', drink: '', notes: '' },
+            wednesday: { mainMeal: '', snack: '', drink: '', notes: '' },
+            thursday: { mainMeal: '', snack: '', drink: '', notes: '' },
+            friday: { mainMeal: '', snack: '', drink: '', notes: '' },
+            saturday: { mainMeal: '', snack: '', drink: '', notes: '' },
+            sunday: { mainMeal: '', snack: '', drink: '', notes: '' }
+        };
+    }
     
-    // Current plan - initialize from localStorage or use empty plan
-    let currentPlan = JSON.parse(localStorage.getItem('lunchPlan')) || {...emptyPlan};
+    const emptyPlan = getEmptyPlan();
+    
+    // Current plan - initialize from localStorage or use a fresh empty plan
+    let currentPlan = JSON.parse(localStorage.getItem('lunchPlan')) || getEmptyPlan();
     
     // Save timeout for debouncing
     let saveTimeout = null;
@@ -191,15 +195,36 @@ document.addEventListener('DOMContentLoaded', function() {
         // Clear week button
         clearWeekBtn.addEventListener('click', function() {
             if (confirm('Are you sure you want to clear all lunch plans for the week?')) {
-                currentPlan = {...emptyPlan};
+                // Get a fresh empty plan
+                currentPlan = getEmptyPlan();
+                
+                // Clear localStorage immediately
+                localStorage.removeItem('lunchPlan');
                 localStorage.setItem('lunchPlan', JSON.stringify(currentPlan));
                 
-                // Re-render UI
-                renderTabContent(document.querySelector('.tab-btn.active').dataset.day);
+                // Get current active day
+                const activeDay = document.querySelector('.tab-btn.active').dataset.day;
+                
+                // Re-render UI for both views
+                renderTabContent(activeDay);
                 renderMobileAccordion();
+                
+                // Update all input fields in the desktop view
+                const tabInputs = tabContent.querySelectorAll('textarea');
+                tabInputs.forEach(input => {
+                    input.value = '';
+                });
+                
+                // Update all input fields in the mobile view
+                const mobileInputs = mobileContainer.querySelectorAll('textarea');
+                mobileInputs.forEach(input => {
+                    input.value = '';
+                });
                 
                 // Show saved status
                 showSaveStatus('Week cleared successfully!');
+                
+                console.log('Plan cleared:', currentPlan);
             }
         });
         

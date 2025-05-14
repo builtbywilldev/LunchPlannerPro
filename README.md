@@ -24,10 +24,7 @@ Built with HTML, CSS, and JavaScript, this lightweight planner lets users input 
 
 ---
 
-## 📸 Screenshots
 
-<img src="screenshots/lunchplanner-1.png" alt="LunchPlanner Pro UI" width="400"/>
-<img src="screenshots/lunchplanner-2.png" alt="Edit lunch form" width="400"/>
 
 ---
 
